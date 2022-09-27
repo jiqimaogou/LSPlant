@@ -275,6 +275,8 @@ bool InitNative(JNIEnv *env, const HookHandler &handler) {
         // Make the runtime non-debuggable as a workaround
         // when ShouldUseInterpreterEntrypoint inlined
         Runtime::Current()->SetJavaDebuggable(Runtime::RuntimeDebugState::kNonJavaDebuggable);
+    } else {
+        Runtime::Current()->DeoptimizeBootImage();
     }
     return true;
 }

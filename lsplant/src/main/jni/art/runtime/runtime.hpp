@@ -51,6 +51,10 @@ private:
         SetRuntimeDebugStateSym(thiz, value);
     }
 
+    CREATE_MEM_FUNC_SYMBOL_ENTRY(void, DeoptimizeBootImage, void *thiz) {
+        DeoptimizeBootImageSym(thiz);
+    }
+
     inline static size_t debug_state_offset = 0U;
 
 public:
@@ -62,6 +66,12 @@ public:
         } else if (debug_state_offset > 0) {
             *reinterpret_cast<RuntimeDebugState *>(reinterpret_cast<uintptr_t>(instance_) +
                                                    debug_state_offset) = value;
+        }
+    }
+
+    void DeoptimizeBootImage() {
+        if (DeoptimizeBootImageSym) {
+            DeoptimizeBootImage(this);
         }
     }
 
@@ -80,6 +90,11 @@ public:
                     SetRuntimeDebugState,
                     "_ZN3art7Runtime20SetRuntimeDebugStateENS0_17RuntimeDebugStateE")) {
                 return false;
+            }
+            if (!RETRIEVE_MEM_FUNC_SYMBOL(
+                    DeoptimizeBootImage,
+                    "_ZN3art7Runtime19DeoptimizeBootImageEv")) {
+                LOGE("failed to find DeoptimizeBootImage");
             }
         }
         if (SetRuntimeDebugStateSym) {
